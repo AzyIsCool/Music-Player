@@ -5,13 +5,105 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Music_Player"
         mc:Ignorable="d"
-        Title="MainWindow" Height="200" Width="1352">
+        Title="MainWindow"
+        Loaded="Window_Loaded"
+        MinWidth="484"
+        MinHeight="315">
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="20"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
-        <Image Stretch="UniformToFill" Grid.RowSpan="2" VerticalAlignment="Center" HorizontalAlignment="Center" Source="Assets/Background.JPG"/>
-        <Frame Grid.Row="1" Name="MainFrame" Source="PlayerPage.xaml"/>
+        <Image Source="Assets/Background.JPG" Stretch="UniformToFill" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+
+        <Grid>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="5">
+                <Button Name="LoadButton" Click="LoadButton_Click" Content="Load Song"/>
+                <Button Margin="5,0" Name="PlayPauseButton" Click="PlayPauseButton_Click" Content="Play Song" IsEnabled="False"/>
+                <Button Name="StopButton" Click="StopButton_Click" Content="Stop Song" IsEnabled="False"/>
+            </StackPanel>
+
+            <Rectangle RadiusY="6" RadiusX="6" HorizontalAlignment="Stretch" Height="70" Margin="100" Name="PlayerBase">
+                <Rectangle.Fill>
+                    <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                        <GradientStop Color="#262626" Offset="0"/>
+                        <GradientStop Color="Black" Offset="1"/>
+                    </LinearGradientBrush>
+                </Rectangle.Fill>
+            </Rectangle>
+            <StackPanel Name="VenetianBlindsHolder" ClipToBounds="True" Height="70" Margin="100,0" Orientation="Horizontal"/>
+            <Rectangle Opacity="1" RadiusY="6" RadiusX="6" HorizontalAlignment="Stretch" Height="70" Margin="100" Name="PlayerBaseTexture">
+                <Rectangle.Fill>
+                    <LinearGradientBrush EndPoint="0.5,2" StartPoint="0.5,0">
+                        <GradientStop Color="#262626" Offset="0"/>
+                        <GradientStop Color="#00000000" Offset="1"/>
+                    </LinearGradientBrush>
+                </Rectangle.Fill>
+            </Rectangle>
+
+            <Grid HorizontalAlignment="Left" Margin="120,0,0,0" Name="RadioWaves"/>
+            <ProgressBar Name="Progress" Height="20" Margin="180,0,255,0">
+                <ProgressBar.Template>
+                    <ControlTemplate TargetType="{x:Type ProgressBar}">
+                        <Grid x:Name="TemplateRoot" Background="#2D2D2D">
+                            <Rectangle x:Name="PART_Track"/>
+                            <Grid x:Name="PART_Indicator" ClipToBounds="False" HorizontalAlignment="Left">
+                                <Rectangle x:Name="Indicator" Fill="{DynamicResource MainSolidColour}">
+                                    <Rectangle.Effect>
+                                        <DropShadowEffect Color="{DynamicResource MainColour}" ShadowDepth="0" BlurRadius="70" RenderingBias="Quality" />
+                                    </Rectangle.Effect>
+                                </Rectangle>
+                            </Grid>
+                        </Grid>
+                    </ControlTemplate>
+                </ProgressBar.Template>
+            </ProgressBar>
+            <Slider Name="SliderButton"  HorizontalAlignment="Stretch" VerticalAlignment="Center" Margin="175,0,240,0" ValueChanged="Slider_ValueChanged" Maximum="100">
+                <Slider.Template>
+                    <ControlTemplate TargetType="{x:Type Slider}">
+                        <Border x:Name="border" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="0" Background="{TemplateBinding Background}" SnapsToDevicePixels="True">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto" MinHeight="{TemplateBinding MinHeight}"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                <Border x:Name="TrackBackground" BorderBrush="#FFD6D6D6" BorderThickness="1" Background="#FFE7EAEA" Height="20" Margin="5,0" Grid.Row="1" Visibility="Hidden" VerticalAlignment="Center"/>
+                                <Track x:Name="PART_Track" Grid.Row="1">
+                                    <Track.Thumb>
+                                        <Thumb x:Name="Thumb" Focusable="False" Height="30" OverridesDefaultStyle="True" VerticalAlignment="Center" Width="30">
+                                            <Thumb.Template>
+                                                <ControlTemplate TargetType="{x:Type Thumb}">
+                                                    <Grid HorizontalAlignment="Center" UseLayoutRounding="True" VerticalAlignment="Center">
+                                                        <Path x:Name="grip" Data="M75,50C75,63.8071187457698 63.8071187457698,75 50,75 36.1928812542302,75 25,63.8071187457698 25,50 25,36.1928812542302 36.1928812542302,25 50,25 63.8071187457698,25 75,36.1928812542302 75,50z" Fill="{DynamicResource MainSolidColour}" Stretch="Fill" SnapsToDevicePixels="True" StrokeThickness="0" UseLayoutRounding="True" VerticalAlignment="Center">
+                                                            <Path.Effect>
+                                                                <DropShadowEffect BlurRadius="0" RenderingBias="Quality" ShadowDepth="2" Direction="180" Opacity="0.25"/>
+                                                            </Path.Effect>
+                                                        </Path>
+                                                        <Path Data="M75,50C75,63.8071187457698 63.8071187457698,75 50,75 36.1928812542302,75 25,63.8071187457698 25,50 25,36.1928812542302 36.1928812542302,25 50,25 63.8071187457698,25 75,36.1928812542302 75,50z" Fill="{DynamicResource MainSolidColour}" Stretch="Fill" SnapsToDevicePixels="True" StrokeThickness="0" UseLayoutRounding="True" VerticalAlignment="Center">
+                                                            <Path.Effect>
+                                                                <DropShadowEffect Color="{DynamicResource MainColour}" ShadowDepth="0" BlurRadius="70" RenderingBias="Quality" />
+                                                            </Path.Effect>
+                                                        </Path>
+                                                    </Grid>
+                                                </ControlTemplate>
+                                            </Thumb.Template>
+                                        </Thumb>
+                                    </Track.Thumb>
+                                </Track>
+                            </Grid>
+                        </Border>
+                    </ControlTemplate>
+                </Slider.Template>
+            </Slider>
+            <Grid HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,120,0">
+                <TextBlock Text="88:88" Foreground="#2D2D2D" FontFamily="Assets/digital-dismay/Digital Dismay.otf#Digital Dismay" FontSize="50"/>
+                <TextBlock Text="00:00" Name="SongTimer" Foreground="{DynamicResource MainSolidColour}" FontFamily="Assets/digital-dismay/Digital Dismay.otf#Digital Dismay" FontSize="50">
+                    <TextBlock.Effect>
+                        <DropShadowEffect Color="{DynamicResource MainColour}" ShadowDepth="0" BlurRadius="10" RenderingBias="Quality" />
+                    </TextBlock.Effect>
+                </TextBlock>
+            </Grid>
+        </Grid>
+
+        <Grid HorizontalAlignment="Left" VerticalAlignment="Bottom" Background="#3F000000">
+            <TextBlock Name="SongName" FontSize="15" Text="Playing: " FontFamily="Assets/digital-dismay/Digital Dismay.otf#Digital Dismay" Margin="5"/>
+        </Grid>
     </Grid>
 </Window>
